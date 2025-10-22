@@ -15,7 +15,7 @@ if(!cached){
     cached = global.mongooseCache = { conn: null, promise: null };
 }
 
-export const connetToDatabase = async() => {
+export const connectToDatabase = async() => {
     if(!MONGODB_URI) throw new Error('MONGODB_URI must be set in the .env');
 
     if(cached.conn) return cached.conn;
