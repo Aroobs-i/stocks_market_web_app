@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Loader2,  TrendingUp} from "lucide-react";
 import Link from "next/link";
 import { searchStocks } from "@/lib/actions/finnhub.action";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function SearchCommand({ renderAs = 'button', label = 'Add stock', initialStocks }: SearchCommandProps) {
   const [open, setOpen] = useState(false)
@@ -30,7 +31,7 @@ export default function SearchCommand({ renderAs = 'button', label = 'Add stock'
   const handleSearch = async () => {
     if(!isSearchMode) return setStocks(initialStocks);
 
-    setLoading(true)
+    setLoading(true);
     try {
         const results = await searchStocks(searchTerm.trim());
         setStocks(results);
@@ -41,12 +42,17 @@ export default function SearchCommand({ renderAs = 'button', label = 'Add stock'
     }
   }
 
+  const debouncedSearch = useDebounce(handleSearch, 300);
+
+  useEffect(() => {
+    debouncedSearch();
+  }, [searchTerm]);
+
   const handleSelectStock = () => {
     setOpen(false);
     setSearchTerm("");
     setStocks(initialStocks);
   }
-
 
   return (
     <>
